@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { PostgrestFilterBuilder } from "supabase"
 
 export async function GET(request: Request) {
   const supabase = createClient()
   const { searchParams } = new URL(request.url)
   const id = searchParams.get("id")
 
+  const numericId = id ? parseInt(id, 10) : null;
+
   let query = supabase.from("blog_posts").select("*")
 
-  if (id) {
-    query = query.eq("id", id).single()
+  if (numericId !== null) {
+    query = (query as PostgrestFilterBuilder<any>).eq("id", numericId).single()
   } else {
     query = query.order("created_at", { ascending: false })
   }
@@ -62,13 +65,19 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
   }
 
-  const { data, error } = await supabase.from("blog_posts").update({ title, content }).eq("id", id).select().single()
+  const numericId = id ? parseInt(id, 10) : null;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (numericId !== null) {
+    const { data, error } = await supabase.from("blog_posts").update({ title, content }).eq("id", numericId).select().single();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data);
+  } else {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
-
-  return NextResponse.json(data)
 }
 
 export async function DELETE(request: Request) {
@@ -84,12 +93,18 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
   }
 
-  const { error } = await supabase.from("blog_posts").delete().eq("id", id)
+  const numericId = id ? parseInt(id, 10) : null;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (numericId !== null) {
+    const { error } = await supabase.from("blog_posts").delete().eq("id", numericId);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: "Post deleted successfully" });
+  } else {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
-
-  return NextResponse.json({ message: "Post deleted successfully" })
 }
 
