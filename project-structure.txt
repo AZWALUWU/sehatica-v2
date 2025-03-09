@@ -1,0 +1,120 @@
+repair-guide-site/
+├── docs/
+│   └── env-setup.md
+│
+├── Front-End/
+│   ├── app/
+│   │   ├── admin/
+│   │   │   ├── analytics/
+│   │   │   │   └── page.tsx
+│   │   │   ├── blog/
+│   │   │   │   ├── edit/[id]/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── new/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── users/
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── blog/
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx
+│   │   │   ├── edit/[id]/
+│   │   │   │   └── page.tsx
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── guide/
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx
+│   │   ├── guides/
+│   │   │   └── page.tsx
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── register/
+│   │   │   └── page.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── admin/
+│   │   │   ├── analytics/
+│   │   │   │   ├── user-visits-table.tsx
+│   │   │   │   └── visit-duration-chart.tsx
+│   │   │   ├── blog/
+│   │   │   │   └── blog-posts-table.tsx
+│   │   │   ├── dashboard/
+│   │   │   │   ├── dashboard-stats.tsx
+│   │   │   │   ├── recent-posts.tsx
+│   │   │   │   └── recent-users.tsx
+│   │   │   ├── users/
+│   │   │   │   └── user-management.tsx
+│   │   │   └── admin-sidebar.tsx
+│   │   ├── auth/
+│   │   │   ├── analytics-tracker.tsx
+│   │   │   └── auth-provider.tsx
+│   │   ├── blog/
+│   │   │   └── blog-post-list.tsx
+│   │   ├── common/
+│   │   │   └── site-header.tsx
+│   │   ├── home/
+│   │   │   ├── featured-guides.tsx
+│   │   │   └── repair-categories.tsx
+│   │   └── ui/
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       ├── input.tsx
+│   │       ├── table.tsx
+│   │       ├── toast.tsx
+│   │       └── ... (other UI components)
+│   ├── hooks/
+│   │   └── use-auth.ts
+│   ├── lib/
+│   │   └── utils.ts
+│   ├── public/
+│   │   └── placeholder.svg
+│   ├── types/
+│   │   └── index.ts
+│   ├── next.config.js
+│   ├── package.json
+│   ├── README.md
+│   └── tailwind.config.js
+│
+├── Back-End/
+│   ├── api/
+│   │   ├── admin/
+│   │   │   ├── users/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── analytics/
+│   │   │       └── route.ts
+│   │   ├── auth/
+│   │   │   └── route.ts
+│   │   ├── blog/
+│   │   │   ├── [id]/
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   └── analytics/
+│   │       └── track/
+│   │           └── route.ts
+│   ├── lib/
+│   │   ├── supabase/
+│   │   │   ├── client.ts
+│   │   │   └── server.ts
+│   │   └── utils.ts
+│   ├── supabase/
+│   │   └── migrations/
+│   │       └── 20230501000000_admin_dashboard.sql
+│   ├── types/
+│   │   └── supabase.ts
+│   └── README.md
+│
+├── .env.example
+├── .gitignore
+├── package.json
+├── tsconfig.json
+└── README.md
+
