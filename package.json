@@ -58,11 +58,12 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "chart.js": "latest",
     "@supabase/supabase-js": "latest",
-    "react-chartjs-2": "latest",
+    "@supabase/ssr": "latest",
     "@supabase/auth-helpers-nextjs": "latest",
-    "tailwindcss": "latest"
+    "react-quill": "latest",
+    "fs": "latest",
+    "path": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

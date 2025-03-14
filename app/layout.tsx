@@ -1,17 +1,19 @@
 import type React from "react"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { SiteHeader } from "@/components/site-header"
-import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "@/components/auth-provider"
-import { AnalyticsTracker } from "@/components/analytics-tracker"
 import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
+import { Toaster } from "@/components/ui/toaster"
+import { SupabaseProvider } from "@/lib/supabase/supabase-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "Sehatica - Your Health Companion",
-  description:
-    "Discover expert advice, latest health trends, and personalized insights to help you live your best life.",
+export const metadata: Metadata = {
+  title: "Sehatica - Platform Informasi Kesehatan Indonesia",
+  description: "Sumber informasi kesehatan terpercaya untuk masyarakat Indonesia",
+  keywords: "kesehatan, penyakit, pengobatan, gejala, pencegahan, Indonesia",
     generator: 'v0.dev'
 }
 
@@ -21,23 +23,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body className={inter.className}>
-        <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <footer className="border-t py-6 md:py-0">
-              <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-                <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-                  © 2023 Sehatica. Your Health Companion.
-                </p>
-              </div>
-            </footer>
-          </div>
-          <AnalyticsTracker />
-        </AuthProvider>
-        <Toaster />
+        <SupabaseProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster />
+          </ThemeProvider>
+        </SupabaseProvider>
       </body>
     </html>
   )

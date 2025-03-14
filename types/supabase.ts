@@ -3,81 +3,78 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
-      blog_posts: {
-        Row: {
-          content: string | null
-          created_at: string | null
-          id: number
-          title: string | null
-          user_id: string | null
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          title?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          title?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      user_analytics: {
+      posts: {
         Row: {
           id: string
-          email: string
-          last_visit: string
-          visit_duration: number
-          visit_count: number
           created_at: string
+          updated_at: string
+          title: string
+          content: string
+          author_id: string
+          published: boolean
+          image_url: string | null
+          slug: string
+          excerpt: string | null
         }
         Insert: {
-          id: string
-          email: string
-          last_visit?: string
-          visit_duration?: number
-          visit_count?: number
+          id?: string
           created_at?: string
+          updated_at?: string
+          title: string
+          content: string
+          author_id: string
+          published?: boolean
+          image_url?: string | null
+          slug: string
+          excerpt?: string | null
         }
         Update: {
           id?: string
-          email?: string
-          last_visit?: string
-          visit_duration?: number
-          visit_count?: number
           created_at?: string
+          updated_at?: string
+          title?: string
+          content?: string
+          author_id?: string
+          published?: boolean
+          image_url?: string | null
+          slug?: string
+          excerpt?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_analytics_id_fkey"
-            columns: ["id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+      }
+      profiles: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          full_name: string | null
+          avatar_url: string | null
+          role: string
+        }
+        Insert: {
+          id: string
+          created_at?: string
+          updated_at?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          role?: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          role?: string
+        }
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      update_visit_duration: {
-        Args: {
-          user_id: string
-          duration: number
-        }
-        Returns: void
-      }
-    }
-    Enums: {
       [_ in never]: never
     }
-    CompositeTypes: {
+    Enums: {
       [_ in never]: never
     }
   }

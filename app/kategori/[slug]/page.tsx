@@ -1,19 +1,14 @@
 "use client"
 
-import type React from "react"
-
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ArrowRight, Search, Filter } from "lucide-react"
+import { ArrowRight, ArrowLeft } from "lucide-react"
 import { useSupabase } from "@/lib/supabase/supabase-provider"
 import { formatDate, getImageUrl } from "@/lib/utils"
 import PostAuthor from "@/components/post-author"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type Post = {
   id: string
@@ -26,32 +21,45 @@ type Post = {
   category: string
 }
 
-export default function BlogPage() {
-  const searchParams = useSearchParams()
+const categoryMap: Record<string, string> = {
+  "penyakit-serius": "Penyakit Serius",
+  "penyakit-ringan": "Penyakit Ringan",
+  "penyakit-parah": "Penyakit Parah",
+  "kesehatan-mental": "Kesehatan Mental",
+}
+
+const categoryDescriptions: Record<string, string> = {
+  "penyakit-serius": "Informasi tentang penyakit-penyakit serius yang memerlukan penanganan medis segera",
+  "penyakit-ringan": "Informasi tentang penyakit ringan yang umumnya dapat sembuh dengan perawatan di rumah",
+  "penyakit-parah": "Informasi tentang penyakit parah yang memerlukan perawatan intensif",
+  "kesehatan-mental": "Informasi tentang kesehatan mental dan cara menjaganya",
+}
+
+export default function CategoryPage({ params }: { params: { slug: string } }) {
+  const { slug } = params
   const { supabase } = useSupabase()
   const [posts, setPosts] = useState<Post[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "")
-  const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category") || "semua")
+  const [error, setError] = useState<string | null>(null)
+
+  const categoryName = categoryMap[slug] || "Kategori Tidak Ditemukan"
+  const categoryDescription = categoryDescriptions[slug] || ""
 
   useEffect(() => {
     const fetchPosts = async () => {
+      if (!categoryMap[slug]) {
+        setError("Kategori tidak ditemukan")
+        setIsLoading(false)
+        return
+      }
+
       try {
-        let query = supabase
+        const { data, error } = await supabase
           .from("posts")
           .select("id, title, excerpt, image_url, created_at, slug, author_id, category")
+          .eq("category", categoryMap[slug])
           .eq("published", true)
           .order("created_at", { ascending: false })
-
-        if (categoryFilter && categoryFilter !== "semua") {
-          query = query.eq("category", categoryFilter)
-        }
-
-        if (searchTerm) {
-          query = query.or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-        }
-
-        const { data, error } = await query
 
         if (error) {
           throw error
@@ -60,54 +68,40 @@ export default function BlogPage() {
         setPosts(data as Post[])
       } catch (error) {
         console.error("Error fetching posts:", error)
+        setError("Gagal memuat artikel")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchPosts()
-  }, [supabase, searchTerm, categoryFilter])
+  }, [supabase, slug])
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+  if (error) {
+    return (
+      <div className="container py-8 md:py-12">
+        <div className="text-center py-12">
+          <h1 className="text-3xl font-bold mb-4">Kategori Tidak Ditemukan</h1>
+          <p className="text-muted-foreground mb-6">Kategori yang Anda cari tidak tersedia.</p>
+          <Button asChild>
+            <Link href="/kategori">Lihat Semua Kategori</Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="container py-8 md:py-12">
+      <Button variant="outline" asChild className="mb-8">
+        <Link href="/kategori" className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" /> Semua Kategori
+        </Link>
+      </Button>
+
       <div className="mb-8">
-        <h1 className="text-3xl font-bold md:text-4xl">Blog Sehatica</h1>
-        <p className="mt-2 text-muted-foreground">Artikel dan informasi kesehatan terbaru dari tim Sehatica</p>
-      </div>
-
-      <div className="mb-8 flex flex-col gap-4 rounded-lg border bg-card p-4 md:flex-row">
-        <form onSubmit={handleSearch} className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Cari artikel..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </form>
-
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Kategori" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="semua">Semua Kategori</SelectItem>
-              <SelectItem value="Penyakit Serius">Penyakit Serius</SelectItem>
-              <SelectItem value="Penyakit Ringan">Penyakit Ringan</SelectItem>
-              <SelectItem value="Penyakit Parah">Penyakit Parah</SelectItem>
-              <SelectItem value="Kesehatan Mental">Kesehatan Mental</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <h1 className="text-3xl font-bold md:text-4xl">{categoryName}</h1>
+        <p className="mt-2 text-muted-foreground">{categoryDescription}</p>
       </div>
 
       {isLoading ? (
@@ -127,21 +121,7 @@ export default function BlogPage() {
       ) : posts.length === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-2">Tidak ada artikel ditemukan</h2>
-          <p className="text-muted-foreground mb-6">
-            {searchTerm || categoryFilter !== "semua"
-              ? `Tidak ada artikel yang sesuai dengan pencarian Anda. Coba kata kunci atau kategori lain.`
-              : "Belum ada artikel yang dipublikasikan."}
-          </p>
-          {(searchTerm || categoryFilter !== "semua") && (
-            <Button
-              onClick={() => {
-                setSearchTerm("")
-                setCategoryFilter("semua")
-              }}
-            >
-              Reset Pencarian
-            </Button>
-          )}
+          <p className="text-muted-foreground mb-6">Belum ada artikel dalam kategori ini.</p>
         </div>
       ) : (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
